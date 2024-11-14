@@ -91,6 +91,16 @@ void Student::set_fio(const string& _fio)
 	this->fio = _fio;
 }
 
+string Student::get_group() const
+{
+	return this->group;
+}
+
+void Student::set_group(const string& _group)
+{
+	this->group = _group;
+}
+
 void Student::set_fio(string&& _fio) noexcept
 {
 	this->fio = move(_fio);
@@ -111,6 +121,26 @@ void Student::set_marks(MyVector<long long>&& _marks) noexcept
 	this->marks = move(_marks);
 }
 
+double Student::get_avgMark()
+{
+	double result = 0.0;
+	long long size = this->marks.getSize();
+
+	if (size == 0)
+	{
+		return result;
+	}
+	else
+	{
+		for (long long i = 0; i < size; i++)
+		{
+			result += this->marks[i];
+		}
+		result /= size;
+		return result;
+	}
+}
+
 Student& Student::operator=(const Student& _student)
 {
 	this->fio = _student.fio;
@@ -125,6 +155,29 @@ Student& Student::operator=(Student&& _student) noexcept
 	return *this;
 }
 
+std::istream& Student::operator>>(std::istream& is)
+{
+	//int temp;
+	//if (is >> temp)
+	//	i = static_cast<COM::COM>(temp);
+	//return is;
+
+
+
+	return is;
+}
+
+std::ostream& Student::operator<<(std::ostream& os)
+{
+	std::string str;
+
+	str += this->group + " ";
+	str += this->fio + " ";
+
+	os << str;
+
+	return os;
+}
 
 #endif // !STUDENT_CPP
 

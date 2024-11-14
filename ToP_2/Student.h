@@ -12,6 +12,7 @@ class Student
 {
 private:
     string fio;
+    string group;
     MyVector<long long> marks;
 
     void nullifyParams();
@@ -27,13 +28,22 @@ public:
 
     string get_fio() const;
     void set_fio(const string& _fio);
+
+    string get_group() const;
+    void set_group(const string& _group);
+
     void set_fio(string&& _fio) noexcept;
     MyVector<long long>& get_marks () const;
+
     void set_marks (const MyVector<long long>& _marks);
     void set_marks (MyVector<long long>&& _marks) noexcept;
+    double get_avgMark();
 
     Student& operator= (const Student& _student);
     Student& operator= (Student&& _student) noexcept;
+
+    std::istream& operator>> (std::istream& is);
+    std::ostream& operator<< (std::ostream& os);
 };
 
 
