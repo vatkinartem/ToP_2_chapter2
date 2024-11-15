@@ -32,8 +32,8 @@ public:
 	void emplace(long long index, const Type& value);
 	void emplace(long long index, Type&& value);
 
-	MyVector<Type>& reserve(long long _capacity);
-	MyVector<Type>& resize(long long _size);
+	MyVector<Type>& reserve(long long _capacity);				/*allocating memory for new pointers for elements*/
+	MyVector<Type>& resize(long long _size);					/*changing size of used area and if needed calling reserve()*/
 	MyVector<Type>& shrink_to_fit();
 	MyVector<Type> getRange(long long _from, long long _to);
 	MyVector<Type>& erase(long long _index);
@@ -48,8 +48,12 @@ public:
 
 	const Type& operator[] (long long _index) const;
 	Type& operator[] (long long _index);
+
 	MyVector<Type>& operator= (const MyVector<Type>& _myVector);
 	MyVector<Type>& operator= (MyVector<Type>&& _myVector) noexcept;
+
+	MyVector<Type>& operator+ (const MyVector<Type>& _myVector);
+	MyVector<Type>& operator+ (MyVector<Type>&& _myVector) noexcept;
 
 protected:
 	
@@ -746,6 +750,20 @@ inline MyVector<Type>& MyVector<Type>::operator=(MyVector<Type>&& _myVector) noe
 	this->capacity = _myVector.capacity;
 	_myVector.nullifyParams();
 
+	return *this;
+}
+
+template<class Type>
+inline MyVector<Type>& MyVector<Type>::operator+(const MyVector<Type>& _myVector)
+{
+	this->pushBack(_myVector);
+	return *this;
+}
+
+template<class Type>
+inline MyVector<Type>& MyVector<Type>::operator+(MyVector<Type>&& _myVector) noexcept
+{
+	this->pushBack(_myVector);
 	return *this;
 }
 

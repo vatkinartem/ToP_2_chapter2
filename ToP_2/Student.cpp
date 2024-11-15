@@ -14,19 +14,22 @@ void Student::nullifyParams()
 {
 	this->fio = "";
 	this->marks.reserve(0);
+	this->avgMark = 0.0;
 }
 
 /*Constructor of Default*/
 Student::Student()
 {
+	this->set_avgMark();
 #ifdef _DEBUG
 	std::cout << " " << this->getClassName() << "() with adress " << this << std::endl;
 #endif // _DEBUG
 }
 
 /*Constructor of Copy*/
-Student::Student(const string& _fio, const MyVector<long long>& _marks) : fio(_fio), marks(_marks)
+Student::Student(const string& _fio, const MyVector<int>& _marks) : fio(_fio), marks(_marks)
 {
+	this->set_avgMark();
 #ifdef _DEBUG
 	std::cout << " " << this->getClassName() << "() with adress " << this << std::endl;
 #endif // _DEBUG
@@ -72,7 +75,8 @@ string Student::getClassName() const
 
 string Student::getStr() const
 {
-	string _str = this->getClassName() + "/" + this->get_fio() + "/";
+	string _str = this->get_fio() + "/";
+	_str += std::to_string(this->get_avgMark()) + "/";
 	for (int i = 0; i < this->marks.getSize(); i++)
 	{
 		_str += std::to_string(this->marks[i]) + " ";
@@ -91,44 +95,34 @@ void Student::set_fio(const string& _fio)
 	this->fio = _fio;
 }
 
-string Student::get_group() const
-{
-	return this->group;
-}
-
-void Student::set_group(const string& _group)
-{
-	this->group = _group;
-}
-
 void Student::set_fio(string&& _fio) noexcept
 {
-	this->fio = move(_fio);
+	this->fio = std::move(_fio);
 }
 
-MyVector<long long>& Student::get_marks() const
+MyVector<int>& Student::get_marks() const
 {
-	return (MyVector<long long>&)this->marks;
+	return (MyVector<int>&)this->marks;
 }
 
-void Student::set_marks(const MyVector<long long>& _marks)
+void Student::set_marks(const MyVector<int>& _marks)
 {
 	this->marks = _marks;
 }
 
-void Student::set_marks(MyVector<long long>&& _marks) noexcept
+void Student::set_marks(MyVector<int>&& _marks) noexcept
 {
-	this->marks = move(_marks);
+	this->marks = std::move(_marks);
 }
 
-double Student::get_avgMark()
+void Student::set_avgMark()
 {
 	double result = 0.0;
 	long long size = this->marks.getSize();
 
 	if (size == 0)
 	{
-		return result;
+		this->avgMark = result;
 	}
 	else
 	{
@@ -137,8 +131,13 @@ double Student::get_avgMark()
 			result += this->marks[i];
 		}
 		result /= size;
-		return result;
+		this->avgMark = result;
 	}
+}
+
+double Student::get_avgMark() const
+{
+	return this->avgMark;
 }
 
 Student& Student::operator=(const Student& _student)
@@ -150,8 +149,26 @@ Student& Student::operator=(const Student& _student)
 
 Student& Student::operator=(Student&& _student) noexcept
 {
-	this->fio = move(_student.fio);
-	this->marks = move(_student.marks);
+	this->fio = std::move(_student.fio);
+	this->marks = std::move(_student.marks);
+	return *this;
+}
+
+Student& Student::operator+(const MyVector<int>& _marks)
+{
+	this->marks.pushBack(_marks);
+	
+	this->set_avgMark();
+
+	return *this;
+}
+
+Student& Student::operator+(MyVector<int>&& _marks) noexcept
+{
+	this->marks.pushBack(std::move(_marks));
+
+	this->set_avgMark();
+
 	return *this;
 }
 
@@ -171,8 +188,8 @@ std::ostream& Student::operator<<(std::ostream& os)
 {
 	std::string str;
 
-	str += this->group + " ";
 	str += this->fio + " ";
+	str += std::to_string(this->get_avgMark()) + " ";
 
 	os << str;
 

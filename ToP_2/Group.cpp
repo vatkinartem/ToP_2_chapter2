@@ -42,21 +42,48 @@ Group::~Group()
 	delete this->data;
 }
 
+std::string Group::getStr()
+{
+	std::string str;
+	long long cur_size = this->data->students.getSize();
+	long long cur_marks_size = 0;
+
+	for (long long i = 0; i < cur_size; i++)
+	{
+		str += this->data->groupNumber + "/";
+		str += this->data->students[i].getStr();
+		str += "/\n";
+	}
+
+	return str;
+}
+
+Group& Group::get_data() const
+{
+	return (Group&)*this->data;
+}
+
 double Group::get_avgMark() const
 {
-	return (double)this->data->avgMark;
+	return this->data->avgMark;
 }
 
 void Group::set_avgMark()
 {
 	double result = 0.0;
-	long long size = this->data->students.getSize();
+	double cur_sumOfMarks = 0.0;
+	long long cur_size = this->data->students.getSize();
 
-	for (long long i = 0; i < size; i++)
+	if (cur_size == 0)
 	{
-		result += this->data->students[i].get_avgMark();
+		this->data->avgMark = result;
 	}
-	result /= size;
+
+	for (long long i = 0; i < cur_size; i++)
+	{
+		cur_sumOfMarks += round(this->data->students[i].get_avgMark() * this->data->students[i].get_marks().getSize());
+	}
+	result = cur_sumOfMarks / cur_size;
 	this->data->avgMark = result;
 }
 
@@ -88,7 +115,7 @@ MyVector<Student>& Group::get_students() const
 void Group::set_students(const MyVector<Student>& _students)
 {
 	this->data->students = _students;
-	this->set_avgMark();
+	this->set_avgMark();				/*recalculating avgMark*/
 }
 
 Group& Group::operator=(const Group& _source)
@@ -121,40 +148,102 @@ Group& Group::operator=(Group&& _source) noexcept
 
 Group& Group::operator+(const Student& _source)
 {
-	// TODO: вставьте здесь оператор return
+	long long source_marks_num = _source.get_marks().getSize();
+	this->data->students.pushBack(_source);
+	if (source_marks_num > 0)
+	{
+		this->set_avgMark();
+	}
+
 	return *this;
 }
 
 Group& Group::operator+(Student&& _source) noexcept
 {
-	// TODO: вставьте здесь оператор return
+	long long source_marks_num = _source.get_marks().getSize();
+	this->data->students.pushBack(std::move(_source));
+	if (source_marks_num > 0)
+	{
+		this->set_avgMark();
+	}
+
 	return *this;
 }
 
 Group& Group::operator+(const Group& _source)
 {
-	// TODO: вставьте здесь оператор return
+	long long source_size = _source.get_students().getSize();
+	this->data->students.pushBack(_source.get_students());
+	if (source_size > 0)
+	{
+		this->set_avgMark();
+	}
+
 	return *this;
 }
 
 Group& Group::operator+(Group&& _source) noexcept
 {
-	// TODO: вставьте здесь оператор return
+	long long source_size = _source.get_students().getSize();
+	this->data->students.pushBack(std::move(_source.get_students()));
+	if (source_size > 0)
+	{
+		this->set_avgMark();
+	}
+
 	return *this;
 }
 
-std::istream& Group::operator>>(std::istream& is)
+Group& Group::operator[](long long index) const
 {
+	if (this->data->students.empty())
+	{
+		throw MyException("Empty vector. Cant acces this index.");
+	}
+	if ((index < 0) || (index >= this->data->students.getSize()))
+	{
+		throw MyException("Index is out of range");
+	}
+	return (Group&)this->data->students[index];
+}
+
+Group& Group::operator[](long long index)
+{
+	if (this->data->students.empty())
+	{
+		throw MyException("Empty vector. Cant acces this index.");
+	}
+	if ((index < 0) || (index >= this->data->students.getSize()))
+	{
+		throw MyException("Index is out of range");
+	}
+	return (Group&)this->data->students[index];
+}
+
+std::istream& operator>>(std::istream& is, Group& right)
+{
+
+
 	return is;
 }
 
-std::ostream& Group::operator<<(std::ostream& os)
+std::ostream& operator<<(std::ostream& os, Group& right)
 {
+	std::string str;
+	long long cur_size = right.data->students.getSize();
+
+	for (long long i = 0; i < cur_size; i++)
+	{
+		str += right.data->groupNumber + "/";
+		str += right.data->students[i].get_fio() + "/";
+		str += std::to_string(right.data->students[i].get_avgMark()) + "/\n";
+	}
+
+	os << str;
+
 	return os;
 }
 
 
 
-
 #endif // !GROUP_CPP
-
