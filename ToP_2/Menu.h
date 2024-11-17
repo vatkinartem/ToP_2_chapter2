@@ -9,7 +9,17 @@ enum COM
 	PRINTSPEC,
 	PRINTALL,
 	LOAD,
+	DELETE,
+	EDIT,
 	EXIT
+};
+
+enum VARS
+{
+	NONE,
+	GROUPS,
+	GROUP,
+	STUDENT	
 };
 
 class Menu
@@ -38,5 +48,7 @@ public:
 	void printspec();
 	void printall();
 	void load();
+	void delete_elem();
+	void edit();
 	void add_entry(const std::string& str);
 };

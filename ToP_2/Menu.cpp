@@ -7,9 +7,16 @@
 using std::cout; using std::endl; using std::cin;
 
 std::istream& operator>> (std::istream& is, COM& right) {
-	int temp;
+	int temp = 0;
 	if (is >> temp)
 		right = static_cast<COM>(temp);
+	return is;
+}
+
+std::istream& operator>> (std::istream& is, VARS& right) {
+	int temp = 0;
+	if (is >> temp)
+		right = static_cast<VARS>(temp);
 	return is;
 }
 
@@ -182,6 +189,7 @@ void Menu::start_Menu()
             switch (command)
             {
             case DEFAULT:
+				cout << "Invalid command" << endl;
                 break;
             case HELP:
                 this->help();
@@ -198,9 +206,14 @@ void Menu::start_Menu()
 			case LOAD:
 				this->load();
 				break;
+			case DELETE:
+				this->delete_elem();
+				break;
+			case EDIT:
+				this->edit();
+				break;
             case EXIT:
-                break;
-            default:
+				cout << "Exit prrogram" << endl;
                 break;
             }
         }
@@ -281,6 +294,8 @@ void Menu::help()
 		<< COM::PRINTSPEC << " - print avg >= 4\n"
 		<< COM::PRINTALL << " - print all\n"
 		<< COM::LOAD << " - load\n"
+		<< COM::DELETE << " - delete\n"
+		<< COM::EDIT << " - edit\n"
 		<< COM::EXIT << " - exit\n"
 		<< endl;
 }
@@ -331,6 +346,10 @@ void Menu::printspec()
 {
 	Groups students;
 	students = std::move(this->search_by_greater_mark(4));
+	if (students.get_groups().getSize() == 0)
+	{
+		cout << "There is no such students" << endl;
+	}
 	/*for each group in groups*/
 	for (long long i = 0; i < students.get_groups().getSize(); i++)
 	{
@@ -345,7 +364,15 @@ void Menu::printspec()
 
 void Menu::printall()
 {
-	std::cout << *this->groups;
+	if (this->groups->get_groups().getSize() > 0)
+	{
+		std::cout << *this->groups;
+	}
+	else
+	{
+		cout << "Nothing to print. Empty group list." << endl;
+	}
+	
 }
 
 void Menu::load()
@@ -404,6 +431,161 @@ void Menu::load()
 		cout << "Added " << total_entries << " entries\n" << endl;
 	}
 
+}
+
+void Menu::delete_elem()
+{
+	long long group_index = -1;
+	long long stud_index = -1;
+	VARS var = VARS::NONE;
+	try
+	{
+		cout << "Input type of element to be deleted (0 - None, 1 - Groups, 2 - Group, 3 - Student)" << endl;
+		cin >> var;
+		cin.clear();
+		if (var == VARS::NONE)
+		{
+			cout << "Cancelling operation" << endl;
+			return;
+		}
+		else if (var == VARS::GROUPS)
+		{
+			cout << "Group mode selected.\nDeleting all groups" << endl;
+			this->groups->get_groups().freeMyVector();
+		} 
+		else if (var == VARS::GROUP)
+		{
+			cout << "Group mode selected.\nChoose index of the group" << endl;
+			cin >> group_index;
+			if (cin.fail())
+			{
+				throw MyException("Failed to parse a string to integer");
+			}
+
+			this->groups->get_groups().erase(group_index);
+		}
+		else if (var == VARS::STUDENT)
+		{
+			cout << "Student mode selected.\nChoose index of the group in which student is" << endl;
+			cin >> group_index;
+			if (cin.fail())
+			{
+				throw MyException("Failed to parse a string to integer");
+			}
+
+			cout << "Choose index of the student in this group " << group_index << endl;
+			cin >> stud_index;
+			if (cin.fail())
+			{
+				throw MyException("Failed to parse a string to integer");
+			}
+
+			this->groups->get_groups()[group_index].get_students().erase(stud_index);
+			this->groups->get_groups()[group_index].set_avgMark();						/*recalculating avgMark in this group*/
+		}
+		cout << "Completed" << endl;
+	}
+	catch (const std::exception& ex)
+	{
+		cin.clear();
+		char c;
+		cin >> c;
+		cout << ex.what() << endl;
+	}
+}
+
+void Menu::edit()
+{
+	Group temp_group;
+	std::string temp_str;
+	std::string part_temp_str;
+	long long group_index = -1;
+	long long stud_index = -1;
+	VARS var = VARS::NONE;
+	try
+	{
+		cout << "Input type of element to be edited (0 - None, 2 - Group, 3 - Student)" << endl;
+		cin >> var;
+		cin.clear();
+		if (var == VARS::NONE)
+		{
+			cout << "Cancelling operation" << endl;
+			return;
+		}
+		else if (var == VARS::GROUP)
+		{
+			cout << "Group mode selected.\nChoose index of the group" << endl;
+			cin >> group_index;
+			if (cin.fail())
+			{
+				throw MyException("Failed to parse a string to integer");
+			}
+
+			cout << "Choose new number of group (string)" << endl;
+			cin >> temp_str;
+			cin.clear();
+
+			this->groups->get_groups()[group_index].set_groupNumber(temp_str);
+		}
+		else if (var == VARS::STUDENT)
+		{
+			cout << "Student mode selected.\nChoose index of the group in which student is" << endl;
+			cin >> group_index;
+			if (cin.fail())
+			{
+				throw MyException("Failed to parse a string to integer");
+			}
+			if ((group_index < 0) || (group_index >= this->groups->get_groups().getSize()))
+			{
+				throw MyException("Index out of range");
+			}
+
+			cout << "Input index of the student in this group " << group_index << endl;
+			cin >> stud_index;
+			if (cin.fail())
+			{
+				throw MyException("Failed to parse a string to integer");
+			}
+			if ((stud_index < 0) || (stud_index >= this->groups->get_groups()[group_index].get_students().getSize()))
+			{
+				throw MyException("Index out of range");
+			}
+			temp_str += this->groups->get_groups()[group_index].get_groupNumber() + "/";
+
+			cout << "Input new data of the student (fio/mark1 mark2 mark3/)" << endl;
+			while (cin >> part_temp_str)
+			{
+				temp_str += part_temp_str + " ";
+				if (cin.peek() == '\n')
+				{
+					break;
+				}
+			}
+			if (cin.fail())
+			{
+				throw MyException("Failed to parse a string to string");
+			}
+
+			temp_group = std::move(parseString(temp_str));
+			if (temp_group.get_students().getSize() <= 0)
+			{
+				throw MyException("After parse somehow got back an empty group");
+			}
+
+			this->groups->get_groups()[group_index].get_students()[stud_index].set_fio(std::move(temp_group.get_students()[0].get_fio()));
+			this->groups->get_groups()[group_index].get_students()[stud_index].set_marks(std::move(temp_group.get_students()[0].get_marks()));
+			this->groups->get_groups()[group_index].get_students()[stud_index].set_avgMark();
+			this->groups->get_groups()[group_index].set_avgMark();						/*recalculating avgMark in this group*/
+		}
+		cout << "Completed" << endl;
+	}
+	catch (const std::exception& ex)
+	{
+		cin.clear();
+		char c;
+		cin >> c;
+		cout << ex.what() << endl;
+	}
 }
 
 void Menu::add_entry(const std::string& str)

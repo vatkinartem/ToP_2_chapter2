@@ -565,16 +565,17 @@ inline MyVector<Type>& MyVector<Type>::erase(long long _from, long long _to)
 		long long newSize = this->size - (_to - _from + 1);
 		long long rightLen = this->size - _to - 1;			/*right part from erasing element/s. This part wil be shifted at the left.*/
 
-		/*transporting data if needed*/
-		for (long long i = _to + 1; i < rightLen; i++)
-		{
-			*this->front[_from + i] = std::move(*this->front[_to + 1 + i]);
-		}
-
-		/*deallocating memory of now unused elements (if needed and it WILL be needed at least one time)*/
-		for (long long  i = newSize; i < this->size; i++)
+		/*deallocating memory of elements in for-erase-range*/
+		for (long long i = _from; i < _to + 1; i++)
 		{
 			delete this->front[i];
+		}
+
+		/*"transporting" data if needed by moving adresses with offset of size of erased array*/
+		for (long long i = 0; i < rightLen; i++)
+		{
+			this->front[_from + i] = this->front[_to + 1 + i];
+			this->front[_to + 1 + i] = nullptr;
 		}
 
 		this->size = newSize;
