@@ -338,10 +338,9 @@ void Menu::printspec()
 		for (long long j = 0; j < students.get_groups()[i].get_students().getSize(); j++)
 		{
 			cout << students.get_groups()[i].get_groupNumber();
-			cout << students.get_groups()[i].get_students()[j];
+			cout << students.get_groups()[i].get_students()[j] << endl;
 		}
 	}
-	cout << students;
 }
 
 void Menu::printall()
