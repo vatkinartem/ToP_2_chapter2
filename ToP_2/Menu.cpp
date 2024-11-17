@@ -110,8 +110,9 @@ Menu::~Menu()
 
 Groups Menu::search_by_name()
 {
+	Groups temp_groups;
 	/*not emplemented*/
-	return (Groups&&)MyVector<Student>();
+	return (Groups&&)temp_groups;
 }
 
 Groups Menu::search_by_greater_mark(long long number)
@@ -153,8 +154,9 @@ Groups Menu::search_by_greater_mark(long long number)
 
 Groups Menu::search_by_lesser_mark()
 {
+	Groups temp_groups;
 	/*not emplemented*/
-	return (Groups&&)MyVector<Student>();
+	return (Groups&&)temp_groups;
 }
 
 void Menu::start_Menu()

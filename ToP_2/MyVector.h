@@ -12,9 +12,8 @@ namespace myvec {
 template <class Type>
 class MyVector
 {
-public:
 	friend void swap(MyVector<Type>& _dest, MyVector<Type>& _source) noexcept;
-
+public:
 	MyVector();
 	MyVector(const MyVector<Type>& _myVector);
 	MyVector(MyVector<Type>&& _myVector) noexcept;

@@ -27,12 +27,14 @@ class Group
 			groupNumber = source.groupNumber;
 			subjects = source.subjects;
 			students = source.students;
+			return *this;
 		}
 		Data& operator=(Data&& source) noexcept {
 			avgMark = std::move(source.avgMark);
 			groupNumber = std::move(source.groupNumber);
 			subjects = std::move(source.subjects);
 			students = std::move(source.students);
+			return *this;
 		}
 	};
 private:
