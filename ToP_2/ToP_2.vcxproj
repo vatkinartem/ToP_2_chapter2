@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="Group.cpp" />
     <ClCompile Include="Groups.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="MyVector.cpp" />
     <ClCompile Include="Student.cpp" />
     <ClCompile Include="ToP_2.cpp" />
@@ -136,6 +137,7 @@
   <ItemGroup>
     <ClInclude Include="Group.h" />
     <ClInclude Include="Groups.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="MyExceptions.h" />
     <ClInclude Include="MyVector.h" />
     <ClInclude Include="Student.h" />

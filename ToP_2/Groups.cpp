@@ -38,39 +38,6 @@ std::string Groups::getStr()
 	return str;
 }
 
-MyVector<Student> Groups::search_by_name()
-{
-	/*not emplemented*/
-	return (MyVector<Student>&&)MyVector<Student>();
-}
-
-MyVector<Student> Groups::search_by_greater_mark(long long number)
-{
-	MyVector<Student> temp;
-	long long groupsNum = this->groups.getSize();	/*Qantity of groups*/
-	long long studentsNum = 0;						/*Qantity of student in current group*/
-
-	for (long long i = 0; i < groupsNum; i++)
-	{
-		studentsNum = this->groups[i].get_students().getSize();
-
-		for (long long j = 0; j < studentsNum; j++)
-		{
-			if (this->groups[i].get_students()[j].get_avgMark() >= number)		/*if avg mark bigger then wanted then adding this student to temp vec*/
-			{
-				temp.pushBack(this->groups[i].get_students()[j]);
-			}
-		}
-	}
-
-	return (MyVector<Student>&&)temp;
-}
-
-MyVector<Student> Groups::search_by_lesser_mark()
-{
-	/*not emplemented*/
-	return (MyVector<Student>&&)MyVector<Student>();
-}
 
 MyVector<Group>& Groups::get_groups() const
 {
@@ -99,34 +66,65 @@ Groups& Groups::operator=(Groups&& _source) noexcept
 	return *this;
 }
 
-Groups& Groups::operator+(const Group& _source)
+Groups& Groups::operator+=(const Group& _source)
 {
-	this->groups.pushBack(_source);
-	return *this;
-}
+	bool match_found = false;
 
-Groups& Groups::operator+(Group&& _source) noexcept
-{
-	this->groups.pushBack(std::move(_source));
-	return *this;
-}
-
-Groups& Groups::operator+(const Groups& _source)
-{
-	long long source_size = _source.groups.getSize();
-	for (long long i = 0; i < source_size; i++)
+	for (long long i = 0; i < this->get_groups().getSize(); i++)
 	{
-		this->groups.pushBack(_source.groups[i]);
+		if (this->groups[i].get_groupNumber() == _source.get_groupNumber())
+		{
+			match_found = true;
+			this->groups[i].get_students().pushBack(_source.get_students());
+			this->groups[i].set_avgMark();		/*recalculating avgMark*/
+			break;
+		}
+	}
+
+	if (match_found == false)
+	{
+		this->get_groups().pushBack(_source);
 	}
 	return *this;
 }
 
-Groups& Groups::operator+(Groups&& _source) noexcept
+Groups& Groups::operator+=(Group&& _source) noexcept
+{
+	bool match_found = false;
+
+	for (long long i = 0; i < this->get_groups().getSize(); i++)
+	{
+		if (this->groups[i].get_groupNumber() == _source.get_groupNumber())
+		{
+			match_found = true;
+			this->groups[i].get_students().pushBack(std::move(_source.get_students()));
+			this->groups[i].set_avgMark();		/*recalculating avgMark*/
+			break;
+		}
+	}
+	if (match_found == false)
+	{
+		this->get_groups().pushBack(std::move(_source));
+	}
+	return *this;
+}
+
+Groups& Groups::operator+=(const Groups& _source)
 {
 	long long source_size = _source.groups.getSize();
 	for (long long i = 0; i < source_size; i++)
 	{
-		this->groups.pushBack(std::move(_source.groups[i]));
+		*this += _source.groups[i];
+	}
+	return *this;
+}
+
+Groups& Groups::operator+=(Groups&& _source) noexcept
+{
+	long long source_size = _source.groups.getSize();
+	for (long long i = 0; i < source_size; i++)
+	{
+		*this += std::move(_source.groups[i]);
 	}
 	return *this;
 }
@@ -157,13 +155,6 @@ Group& Groups::operator[](long long index)
 	}
 
 	return this->groups[index];
-}
-
-std::istream& operator>>(std::istream& is, Groups& right)
-{
-
-
-	return is;
 }
 
 std::ostream& operator<<(std::ostream& os, Groups& right)

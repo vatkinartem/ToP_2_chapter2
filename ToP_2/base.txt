@@ -1,0 +1,7 @@
+1/Vyatkin A.A./4 5 3 5 3 5 4 5 2/
+1/Petrov S.P./3 4 3 4 3 4 4 3 3/
+1/Sidorov A.G./2 3 2 3 3 3 2 4/
+2/Viktorov V.V./5 5 5 5 5 5 5 5 5/
+2/Shemyakina U.S./4 5 4 5 4 5/
+3/Kashevarova I.F./1 3 4 2 5 4 5/
+4/Brown J.P./2 3 4 2 3/

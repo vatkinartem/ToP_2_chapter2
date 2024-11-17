@@ -46,7 +46,7 @@ public:
 	virtual ~Group();
 	std::string getStr();
 
-	Group& get_data() const;
+	Data& get_data() const;
 	double get_avgMark() const;
 	void set_avgMark();
 	string& get_groupNumber() const;
@@ -59,16 +59,15 @@ public:
 	Group& operator=(const Group& _source);
 	Group& operator=(Group&& _source) noexcept;
 
-	Group& operator+(const Student& _source);
-	Group& operator+(Student&& _source) noexcept;
+	Group& operator+=(const Student& _source);
+	Group& operator+=(Student&& _source) noexcept;
 
-	Group& operator+(const Group& _source);
-	Group& operator+(Group&& _source) noexcept;
+	Group& operator+=(const Group& _source);
+	Group& operator+=(Group&& _source) noexcept;
 
 	Group& operator[](long long index) const;
 	Group& operator[](long long index);
 
-	friend std::istream& operator>> (std::istream& is, Group& right);
 	friend std::ostream& operator<< (std::ostream& os, Group& right);
 };
 

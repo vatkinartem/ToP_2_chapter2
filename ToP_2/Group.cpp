@@ -58,9 +58,9 @@ std::string Group::getStr()
 	return str;
 }
 
-Group& Group::get_data() const
+Group::Data& Group::get_data() const
 {
-	return (Group&)*this->data;
+	return (Group::Data&)*this->data;
 }
 
 double Group::get_avgMark() const
@@ -72,6 +72,7 @@ void Group::set_avgMark()
 {
 	double result = 0.0;
 	double cur_sumOfMarks = 0.0;
+	double cur_numOfMarks = 0.0;
 	long long cur_size = this->data->students.getSize();
 
 	if (cur_size == 0)
@@ -81,9 +82,10 @@ void Group::set_avgMark()
 
 	for (long long i = 0; i < cur_size; i++)
 	{
+		cur_numOfMarks += this->data->students[i].get_marks().getSize();
 		cur_sumOfMarks += round(this->data->students[i].get_avgMark() * this->data->students[i].get_marks().getSize());
 	}
-	result = cur_sumOfMarks / cur_size;
+	result = cur_sumOfMarks / cur_numOfMarks;
 	this->data->avgMark = result;
 }
 
@@ -146,7 +148,7 @@ Group& Group::operator=(Group&& _source) noexcept
 	return *this;
 }
 
-Group& Group::operator+(const Student& _source)
+Group& Group::operator+=(const Student& _source)
 {
 	long long source_marks_num = _source.get_marks().getSize();
 	this->data->students.pushBack(_source);
@@ -158,7 +160,7 @@ Group& Group::operator+(const Student& _source)
 	return *this;
 }
 
-Group& Group::operator+(Student&& _source) noexcept
+Group& Group::operator+=(Student&& _source) noexcept
 {
 	long long source_marks_num = _source.get_marks().getSize();
 	this->data->students.pushBack(std::move(_source));
@@ -170,7 +172,7 @@ Group& Group::operator+(Student&& _source) noexcept
 	return *this;
 }
 
-Group& Group::operator+(const Group& _source)
+Group& Group::operator+=(const Group& _source)
 {
 	long long source_size = _source.get_students().getSize();
 	this->data->students.pushBack(_source.get_students());
@@ -182,7 +184,7 @@ Group& Group::operator+(const Group& _source)
 	return *this;
 }
 
-Group& Group::operator+(Group&& _source) noexcept
+Group& Group::operator+=(Group&& _source) noexcept
 {
 	long long source_size = _source.get_students().getSize();
 	this->data->students.pushBack(std::move(_source.get_students()));
@@ -220,18 +222,12 @@ Group& Group::operator[](long long index)
 	return (Group&)this->data->students[index];
 }
 
-std::istream& operator>>(std::istream& is, Group& right)
-{
-
-
-	return is;
-}
-
 std::ostream& operator<<(std::ostream& os, Group& right)
 {
 	std::string str;
 	long long cur_size = right.data->students.getSize();
-
+	str += std::string("Group: ") + right.data->groupNumber + "\n";
+	str += std::string("Average mark: ") + std::to_string(right.data->avgMark) + "\n";
 	for (long long i = 0; i < cur_size; i++)
 	{
 		str += right.data->groupNumber + "/";

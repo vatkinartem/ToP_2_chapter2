@@ -44,8 +44,8 @@ public:
     Student& operator+ (const MyVector<int>& _marks);         /*adding marks and recalculating avgMark*/
     Student& operator+ (MyVector<int>&& _marks) noexcept;     /*adding marks and recalculating avgMark*/
 
-    std::istream& operator>> (std::istream& is);
-    std::ostream& operator<< (std::ostream& os);
+    friend std::istream& operator>> (std::istream& is, Student& right);
+    friend std::ostream& operator<< (std::ostream& os, Student& right);
 };
 
 

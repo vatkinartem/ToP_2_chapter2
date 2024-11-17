@@ -20,27 +20,18 @@ void Student::nullifyParams()
 /*Constructor of Default*/
 Student::Student()
 {
-	this->set_avgMark();
-#ifdef _DEBUG
-	std::cout << " " << this->getClassName() << "() with adress " << this << std::endl;
-#endif // _DEBUG
+	this->avgMark = 0.0;
 }
 
 /*Constructor of Copy*/
 Student::Student(const string& _fio, const MyVector<int>& _marks) : fio(_fio), marks(_marks)
 {
 	this->set_avgMark();
-#ifdef _DEBUG
-	std::cout << " " << this->getClassName() << "() with adress " << this << std::endl;
-#endif // _DEBUG
 }
 
 /*Constructor of Copy*/
-Student::Student(const Student& _student) : fio(_student.fio), marks(_student.marks)
+Student::Student(const Student& _student) : fio(_student.fio), marks(_student.marks), avgMark(_student.avgMark)
 {
-#ifdef _DEBUG
-	std::cout << " " << this->getClassName() << "() with adress " << this << std::endl;
-#endif // _DEBUG
 }
 
 /*Constructor of Move*/
@@ -48,17 +39,12 @@ Student::Student(Student&& _student) noexcept
 {
 	this->fio = move(_student.fio);
 	this->marks = move(_student.marks);
-#ifdef _DEBUG
-	std::cout << " " << this->getClassName() << "() with adress " << this << std::endl;
-#endif // _DEBUG
+	this->avgMark = move(_student.avgMark);
 }
 
 /*Destructor*/
 Student::~Student()
 {
-#ifdef _DEBUG
-	std::cout << "~" << this->getClassName() << "() with adress " << this << std::endl;
-#endif // _DEBUG
 }
 
 void Student::moveSwap(Student& _source) noexcept
@@ -108,11 +94,13 @@ MyVector<int>& Student::get_marks() const
 void Student::set_marks(const MyVector<int>& _marks)
 {
 	this->marks = _marks;
+	this->set_avgMark();
 }
 
 void Student::set_marks(MyVector<int>&& _marks) noexcept
 {
 	this->marks = std::move(_marks);
+	this->set_avgMark();
 }
 
 void Student::set_avgMark()
@@ -144,6 +132,7 @@ Student& Student::operator=(const Student& _student)
 {
 	this->fio = _student.fio;
 	this->marks = _student.marks;
+	this->avgMark = _student.avgMark;
 	return *this;
 }
 
@@ -151,6 +140,7 @@ Student& Student::operator=(Student&& _student) noexcept
 {
 	this->fio = std::move(_student.fio);
 	this->marks = std::move(_student.marks);
+	this->avgMark = std::move(_student.avgMark);
 	return *this;
 }
 
@@ -172,24 +162,22 @@ Student& Student::operator+(MyVector<int>&& _marks) noexcept
 	return *this;
 }
 
-std::istream& Student::operator>>(std::istream& is)
+std::istream& operator>>(std::istream& is, Student& right)
 {
 	//int temp;
 	//if (is >> temp)
 	//	i = static_cast<COM::COM>(temp);
 	//return is;
 
-
-
 	return is;
 }
 
-std::ostream& Student::operator<<(std::ostream& os)
+std::ostream& operator<<(std::ostream& os, Student& right)
 {
 	std::string str;
 
-	str += this->fio + " ";
-	str += std::to_string(this->get_avgMark()) + " ";
+	str += right.fio + " ";
+	str += std::to_string(right.get_avgMark()) + " ";
 
 	os << str;
 

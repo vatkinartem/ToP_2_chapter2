@@ -111,10 +111,6 @@ template<class Type>
 inline MyVector<Type>::MyVector()
 {
 	this->nullifyParams();
-#ifdef _DEBUG
-	using namespace std;
-	std::cout << " " << this->getClassName() << "() with adress " << this << std::endl;
-#endif // _DEBUG
 }
 
 /*Conctructor of Copying*/
@@ -123,10 +119,6 @@ inline MyVector<Type>::MyVector(const MyVector<Type>& _myVector)
 {
 	this->nullifyParams();
 	this->copyData(_myVector);
-#ifdef _DEBUG
-	using namespace std;
-	std::cout << " " << this->getClassName() << "() with adress " << this << " with source " << &_myVector << std::endl;
-#endif // _DEBUG
 }
 
 /*Conctructor of Transporting*/
@@ -139,10 +131,6 @@ inline MyVector<Type>::MyVector(MyVector<Type>&& _myVector) noexcept
 	this->size = _myVector.size;
 	this->capacity = _myVector.capacity;
 	_myVector.nullifyParams();
-#ifdef _DEBUG
-	using namespace std;
-	std::cout << " " << this->getClassName() << "() with adress " << this << " with source " << &_myVector << std::endl;
-#endif // _DEBUG
 }
 
 /*Destructor*/
@@ -150,10 +138,6 @@ template<class Type>
 MyVector<Type>::~MyVector()
 {
 	this->freeMyVector();
-#ifdef _DEBUG
-	using namespace std;
-	std::cout << "~" << this->getClassName() << "() with adress " << this << std::endl;
-#endif // _DEBUG
 }
 
 template<class Type>
@@ -459,11 +443,13 @@ inline MyVector<Type>& MyVector<Type>::resize(long long _size)
 				this->front[this->size + i] = new Type;
 				if (this->front[this->size + i] == nullptr)
 				{
+					this->size = this->size + i;
+					this->back = this->front + this->size;
 					throw MyException("Couldnt allocate memory in resize(long long _size) func. If above range of prev size and lower then capacity.") ;
 				}
-				this->back++;
-				this->size++;
 			}
+			this->size = _size;
+			this->back = this->front + this->size;
 		}
 		catch (const exception& ex)
 		{
@@ -483,11 +469,13 @@ inline MyVector<Type>& MyVector<Type>::resize(long long _size)
 				this->front[this->size + i] = new Type;
 				if (this->front[this->size + i] == nullptr)
 				{
+					this->size = this->size + i;
+					this->back = this->front + this->size;
 					throw MyException("Couldnt allocate memory in resize(long long _size) func. If above range of prev size and higher then capacity.") ;
 				}
-				this->back++;
-				this->size++;
 			}
+			this->size = _size;
+			this->back = this->front + this->size;
 		}
 		catch (const exception& ex)
 		{
@@ -811,7 +799,7 @@ template<class Type>
 inline void MyVector<Type>::copyData(const MyVector<Type>& _myVector)
 {
 	this->freeMyVector();
-	this->reserve(_myVector.size);
+	this->resize(_myVector.size);
 	/*Cycle for copying data*/
 	for (long long i = 0; i < _myVector.size; i++)
 	{
