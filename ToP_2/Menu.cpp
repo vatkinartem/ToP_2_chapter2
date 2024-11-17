@@ -161,7 +161,6 @@ Groups Menu::search_by_lesser_mark()
 
 void Menu::start_Menu()
 {
-	Groups students;
     COM command = COM::DEFAULT;
 
     this->help();
@@ -191,11 +190,10 @@ void Menu::start_Menu()
                 this->input();
                 break;
             case PRINTSPEC:
-				students = std::move(this->search_by_greater_mark(4));
-				cout << students;
+				this->printspec();
                 break;
 			case PRINTALL:
-				this->print();
+				this->printall();
 				break;
 			case LOAD:
 				this->load();
@@ -329,7 +327,24 @@ void Menu::input()
 	}
 }
 
-void Menu::print()
+void Menu::printspec()
+{
+	Groups students;
+	students = std::move(this->search_by_greater_mark(4));
+	/*for each group in groups*/
+	for (long long i = 0; i < students.get_groups().getSize(); i++)
+	{
+		/*for each student*/
+		for (long long j = 0; j < students.get_groups()[i].get_students().getSize(); j++)
+		{
+			cout << students.get_groups()[i].get_groupNumber();
+			cout << students.get_groups()[i].get_students()[j];
+		}
+	}
+	cout << students;
+}
+
+void Menu::printall()
 {
 	std::cout << *this->groups;
 }

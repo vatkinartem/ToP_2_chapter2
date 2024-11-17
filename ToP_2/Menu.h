@@ -35,7 +35,8 @@ public:
 	void set_groups(Groups* groups);
 	void help();
 	void input();
-	void print();
+	void printspec();
+	void printall();
 	void load();
 	void add_entry(const std::string& str);
 };

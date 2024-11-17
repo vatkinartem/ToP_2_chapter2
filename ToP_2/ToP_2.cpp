@@ -13,7 +13,6 @@ int main()
     Groups groups;
     Menu menu(&groups);
 
-    menu.load();
     menu.start_Menu();
 
     return 1;
